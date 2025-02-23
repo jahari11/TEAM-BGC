@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",  // Required to make paths work
+    "paths": {
+      "@/*": ["src/*"]  // Correctly maps "@/..." to "src/..."
+    }
+  }
+}
