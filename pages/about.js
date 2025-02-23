@@ -36,7 +36,7 @@ export default function About() {
         <div className="relative w-full md:w-1/2 h-[350px] md:h-auto">
           {/* Image Grid */}
           <div className="grid grid-cols-2 grid-rows-2 gap-1 w-full h-full">
-            {["biggphoto1.jpg", "biggphoto2.jpg", "biggphoto3.jpg", "biggphoto4.jpg"].map((img, index) => (
+            {["biggphoto1.jpg", "biggphoto2.jpg", "biggphoto3.png", "biggphoto4.png"].map((img, index) => (
               <div key={index} className="relative w-full h-full">
                 <Image src={`/images/${img}`} alt={`G${index + 1}`} fill className="object-cover rounded-md" />
               </div>
