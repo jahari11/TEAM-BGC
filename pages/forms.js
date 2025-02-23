@@ -279,12 +279,12 @@ export default function FormCards() {
   
 
   return (
-    <div className="container mx-auto p-4 h-screen">
+    <div className="container mx-auto p-4 min-h-screen">
       <div className="flex flex-col items-center">
       <h1 className="font-bold text-4xl uppercase">Team BGC Forms</h1>
       <p className="text-lg text-center">Fill out the form below to submit your information. Please ensure all details are accurate before submitting.</p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-auto md:h-[90%]">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-screen">
   {forms.map((form) => (
     <Card
       key={form.id}
