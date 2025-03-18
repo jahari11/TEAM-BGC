@@ -1,11 +1,18 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
+import { createClient } from "@supabase/supabase-js";
 import { Card, CardHeader, CardTitle } from "components/ui/card";
 import { Button } from "components/ui/button";
 import { Input } from "components/ui/input";
 import { Label } from "components/ui/label";
 import { Textarea } from "components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "components/ui/select";
+
+// Initialize Supabase
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
 
 const forms = [
   { id: "waiver", title: "Waiver Form", description: "Legal agreement for participation." },
@@ -16,315 +23,200 @@ const forms = [
 
 export default function FormCards() {
   const [activeForm, setActiveForm] = useState(null);
-  const [fileName, setFileName] = useState("");
-  const [isUnder18, setIsUnder18] = useState(null);
+  const [formData, setFormData] = useState({});
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = activeForm ? "hidden" : "auto";
     return () => (document.body.style.overflow = "auto");
   }, [activeForm]);
 
-  const handleFileChange = (e) => {
-    setFileName(e.target.files.length > 0 ? e.target.files[0].name : "");
+  // Handle input changes
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
-  const [teamCategory, setTeamCategory] = useState("");
+  // Handle file upload for Under-18 Waiver form
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    const fileInput = document.getElementById("waiver-file-upload");
-    const file = fileInput?.files[0];
-  
-    const formData = new FormData();
-    formData.append("formType", activeForm);
-    formData.append("firstName", document.getElementById(`${activeForm}-first-name`)?.value || "");
-    formData.append("lastName", document.getElementById(`${activeForm}-last-name`)?.value || "");
-    formData.append("email", document.getElementById(`${activeForm}-email`)?.value || "");
-    formData.append("phone", document.getElementById(`${activeForm}-phone`)?.value || "");
-    formData.append("businessName", document.getElementById(`${activeForm}-business-name`)?.value || "");
-    formData.append("teamName", document.getElementById(`${activeForm}-team-name`)?.value || "");
-    formData.append("teamCategory", teamCategory || "");
-    formData.append("businessDescription", document.getElementById(`${activeForm}-desc`)?.value || "");
-    formData.append("additionalInfo", document.getElementById("waiver-additional-info")?.value || "");
-    formData.append("dob", document.getElementById(`${activeForm}-dob`)?.value || "");
-    formData.append("guardianFirstName", document.getElementById("guardian-first-name")?.value || "");
-    formData.append("guardianLastName", document.getElementById("guardian-last-name")?.value || "");
+    setLoading(true);
 
-  
-  
-    if (file) {
-      formData.append("waiverFile", file);
+    console.log("Submitting form:", formData);
+
+    let uploadedFileUrl = null;
+
+    if (file && activeForm === "under-18-waiver") {
+        console.log("Uploading file:", file.name);
+        const { data, error } = await supabase.storage
+            .from("documents")
+            .upload(`private/${file.name}`, file);
+
+        if (error) {
+            console.error("File upload failed:", error);
+            alert("File upload failed.");
+            setLoading(false);
+            return;
+        }
+        uploadedFileUrl = data.path;
+        console.log("File uploaded successfully:", uploadedFileUrl);
     }
-  
-    try {
-      const response = await fetch("/api/submit", {
-        method: "POST",
-        body: formData, // Send FormData instead of JSON
-      });
-  
-      if (response.ok) {
+
+    const formSubmission = {
+        ...formData,
+        form_type: activeForm,
+        file_url: uploadedFileUrl || null,
+        created_at: new Date(),
+    };
+
+    console.log("Inserting into Supabase:", formSubmission);
+
+    const { error } = await supabase.from('form_submissions').insert([formSubmission]);
+
+    if (error) {
+        console.error("Submission error:", error);
+        alert("Submission failed. See console for details.");
+    } else {
+        console.log("Form submitted successfully!");
         alert("Form submitted successfully!");
         setActiveForm(null);
-        setFileName("");
-      } else {
-        alert("Error submitting form. Please try again.");
-      }
-    } catch (error) {
-      console.error("Form submission error:", error);
-      alert("Error submitting form.");
+        setFormData({});
+        setFile(null);
     }
-  };
+
+    setLoading(false);
+};
 
   const renderFormFields = () => {
     switch (activeForm) {
       case "under-18-waiver":
-  return (
-    <>
-      <div className="space-y-0">
-        <Label htmlFor="under18-first-name" className="mb-2">First Name</Label>
-        <Input id="under18-first-name" placeholder="First Name" />
-      </div>
+        return (
+          <>
+            <Label htmlFor="first_name">First Name</Label>
+            <Input id="first_name" placeholder="First Name" onChange={handleChange} />
 
-      <div className="space-y-0">
-        <Label htmlFor="under18-last-name" className="mb-2">Last Name</Label>
-        <Input id="under18-last-name" placeholder="Last Name" />
-      </div>
+            <Label htmlFor="last_name">Last Name</Label>
+            <Input id="last_name" placeholder="Last Name" onChange={handleChange} />
 
-      <div className="space-y-0">
-        <Label htmlFor="under18-dob" className="mb-2">Date of Birth</Label>
-        <Input id="under18-dob" type="date" />
-      </div>
+            <Label htmlFor="date_of_birth">Date of Birth</Label>
+            <Input id="date_of_birth" type="date" onChange={handleChange} />
 
-      <div className="mt-4 p-3 border rounded-lg">
-        <p className="text-sm font-semibold">Parent / Guardian Information</p>
+            <Label htmlFor="guardian_first_name">Guardian First Name</Label>
+            <Input id="guardian_first_name" placeholder="Guardian First Name" onChange={handleChange} />
 
-        <div className="space-y-0">
-          <Label htmlFor="guardian-first-name" className="mb-2">Parent/Guardian First Name</Label>
-          <Input id="guardian-first-name" placeholder="First Name" />
-        </div>
+            <Label htmlFor="guardian_last_name">Guardian Last Name</Label>
+            <Input id="guardian_last_name" placeholder="Guardian Last Name" onChange={handleChange} />
 
-        <div className="space-y-0">
-          <Label htmlFor="guardian-last-name" className="mb-2">Parent/Guardian Last Name</Label>
-          <Input id="guardian-last-name" placeholder="Last Name" />
-        </div>
-      </div>
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" type="email" placeholder="Email" onChange={handleChange} />
 
-      <div className="space-y-0">
-              <Label htmlFor="team-email" className="mb-2">Email</Label>
-              <Input id="under18-email" type="email" placeholder="Email" />
-      </div>
+            <Label htmlFor="phone">Phone Number</Label>
+            <Input id="phone" type="tel" placeholder="Phone Number" onChange={handleChange} />
 
-      <div className="space-y-0">
-        <Label htmlFor="under18-phone" className="mb-2">Phone Number</Label>
-        <Input id="under18-phone" type="tel" placeholder="Phone Number" />
-      </div>
+            <Label htmlFor="team_category">Team Category</Label>
+            <Select id="team_category" onValueChange={(value) => setFormData({ ...formData, team_category: value })}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="bgc-highschool">BGC - Highschool (Boys)</SelectItem>
+                <SelectItem value="bgc-biddies">BGC - Biddies</SelectItem>
+              </SelectContent>
+            </Select>
 
-      <div className="space-y-0">
-  <Label htmlFor="under18-team-category" className="mb-2">Team Category</Label>
-  <Select onValueChange={(value) => setTeamCategory(value)}>
-    <SelectTrigger>
-      <SelectValue placeholder="Select a category" />
-    </SelectTrigger>
-    <SelectContent>
-      <SelectItem value="bgc-highschool">BGC - Highschool (Boys)</SelectItem>
-      <SelectItem value="bgc-biddies">BGC - Biddies</SelectItem>
-    </SelectContent>
-  </Select>
-</div>
+            <Label htmlFor="file">Upload Birth Certificate (PDF/JPEG)</Label>
+            <Input id="file" type="file" accept=".pdf,.jpg,.jpeg" onChange={handleFileChange} />
+          </>
+        );
 
-
-      <div className="space-y-0">
-        <Label htmlFor="under18-file-upload" className="mb-2">Upload Document (PDF or JPEG)</Label>
-        <div className="flex items-center space-x-2">
-          <Input id="under18-file-upload" type="file" accept=".pdf,.jpeg,.jpg" onChange={handleFileChange} />
-          <Button type="button" variant="outline" onClick={() => document.getElementById("under18-file-upload").click()}>
-            Choose File
-          </Button>
-          <span className="text-sm text-gray-500">{fileName || "No file chosen"}</span>
-        </div>
-      </div>
-    </>
-  );
-  
       case "team":
         return (
           <>
-            <div className="space-y-0">
-              <Label htmlFor="team-first-name" className="mb-2">First Name</Label>
-              <Input id="team-first-name" placeholder="First Name" />
-            </div>
-  
-            <div className="space-y-0">
-              <Label htmlFor="team-last-name" className="mb-2">Last Name</Label>
-              <Input id="team-last-name" placeholder="Last Name" />
-            </div>
-  
-            <div className="space-y-0">
-              <Label htmlFor="team-name" className="mb-2">Team Name</Label>
-              <Input id="team-name" placeholder="Team Name" />
-            </div>
-  
-            <div className="space-y-0">
-              <Label htmlFor="team-email" className="mb-2">Email</Label>
-              <Input id="team-email" type="email" placeholder="Email" />
-            </div>
-  
-            <div className="space-y-0">
-              <Label htmlFor="team-phone" className="mb-2">Phone Number</Label>
-              <Input id="team-phone" type="tel" placeholder="Phone Number" />
-            </div>
-  
-            <div className="space-y-0">
-              <Label htmlFor="team-category" className="mb-2">Team Category</Label>
-              <Select onValueChange={(value) => setTeamCategory(value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="bgc-men">BGC's - Men</SelectItem>
-                  <SelectItem value="big-g-upstate">BIG G's Upstate Pro Am</SelectItem>
-                  <SelectItem value="bgc-highschool">BGC - Highschool (Boys)</SelectItem>
-                  <SelectItem value="bgc-biddies">BGC - Biddies</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <Label htmlFor="first_name">First Name</Label>
+            <Input id="first_name" placeholder="First Name" onChange={handleChange} />
+
+            <Label htmlFor="last_name">Last Name</Label>
+            <Input id="last_name" placeholder="Last Name" onChange={handleChange} />
+
+            <Label htmlFor="team_name">Team Name</Label>
+            <Input id="team_name" placeholder="Team Name" onChange={handleChange} />
+
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" type="email" placeholder="Email" onChange={handleChange} />
+
+            <Label htmlFor="phone">Phone Number</Label>
+            <Input id="phone" type="tel" placeholder="Phone Number" onChange={handleChange} />
           </>
         );
-  
+
       case "vendor":
         return (
           <>
-          <div className="space-y-0">
-            <Label htmlFor="vendor-first-name" className="mb-2">First Name</Label>
-            <Input id="vendor-first-name" placeholder="First Name" />
-          </div>
+            <Label htmlFor="first_name">First Name</Label>
+            <Input id="first_name" placeholder="First Name" onChange={handleChange} />
 
-          <div className="space-y-0">
-            <Label htmlFor="vendor-last-name" className="mb-2">Last Name</Label>
-            <Input id="vendor-last-name" placeholder="Last Name" />
-          </div>
+            <Label htmlFor="last_name">Last Name</Label>
+            <Input id="last_name" placeholder="Last Name" onChange={handleChange} />
 
-          <div className="space-y-0">
-            <Label htmlFor="vendor-business-name" className="mb-2">Business Name</Label>
-            <Input id="vendor-business-name" placeholder="Business Name" />
-          </div>
+            <Label htmlFor="business_name">Business Name</Label>
+            <Input id="business_name" placeholder="Business Name" onChange={handleChange} />
 
-          <div className="space-y-0">
-            <Label htmlFor="vendor-email" className="mb-2">Email</Label>
-            <Input id="vendor-email" type="email" placeholder="Email" />
-          </div>
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" type="email" placeholder="Email" onChange={handleChange} />
 
-          <div className="space-y-0">
-            <Label htmlFor="vendor-phone" className="mb-2">Phone Number</Label>
-            <Input id="vendor-phone" type="tel" placeholder="Phone Number" />
-          </div>
+            <Label htmlFor="phone">Phone Number</Label>
+            <Input id="phone" type="tel" placeholder="Phone Number" onChange={handleChange} />
 
-          <div className="space-y-0">
-            <Label htmlFor="vendor-desc" className="mb-2">Business Description</Label>
-            <Textarea id="vendor-desc" placeholder="Describe your business..." />
-          </div>
-        </>
+            <Label htmlFor="description">Business Description</Label>
+            <Textarea id="description" placeholder="Describe your business..." onChange={handleChange} />
+          </>
         );
-  
 
+      case "waiver":
+        return (
+          <>
+            <Label htmlFor="first_name">First Name</Label>
+            <Input id="first_name" placeholder="First Name" onChange={handleChange} />
 
-        case "waiver":
-  return (
-    <>
-      <div className="space-y-0">
-        <Label htmlFor="waiver-first-name" className="mb-2">First Name</Label>
-        <Input id="waiver-first-name" placeholder="First Name" />
-      </div>
+            <Label htmlFor="last_name">Last Name</Label>
+            <Input id="last_name" placeholder="Last Name" onChange={handleChange} />
 
-      <div className="space-y-0">
-        <Label htmlFor="waiver-last-name" className="mb-2">Last Name</Label>
-        <Input id="waiver-last-name" placeholder="Last Name" />
-      </div>
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" type="email" placeholder="Email" onChange={handleChange} />
 
-      <div className="space-y-0">
-        <Label htmlFor="waiver-email" className="mb-2">Email</Label>
-        <Input id="waiver-email" type="email" placeholder="Email" />
-      </div>
+            <Label htmlFor="phone">Phone Number</Label>
+            <Input id="phone" type="tel" placeholder="Phone Number" onChange={handleChange} />
+          </>
+        );
 
-      <div className="space-y-0">
-        <Label htmlFor="waiver-phone" className="mb-2">Phone Number</Label>
-        <Input id="waiver-phone" type="tel" placeholder="Phone Number" />
-      </div>
-
-      <div className="space-y-0">
-        <Label htmlFor="waiver-team-category" className="mb-2">Team Category</Label>
-        <Select onValueChange={(value) => setTeamCategory(value)}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select a category" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="bgc-men">BGC's - Men</SelectItem>
-            <SelectItem value="big-g-upstate">BIG G's Upstate Pro Am</SelectItem>
-            <SelectItem value="bgc-highschool">BGC - Highschool (Boys)</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-    </>
-  );
-
-        
-        
-  
       default:
         return null;
     }
   };
-  
-  
 
   return (
-    <div className="container mx-auto p-4 min-h-screen">
-      <div className="flex flex-col items-center">
-      <h1 className="font-bold text-4xl uppercase">Team BGC Forms</h1>
-      <p className="text-lg text-center">Fill out the form below to submit your information. Please ensure all details are accurate before submitting.</p>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-screen">
-  {forms.map((form) => (
-    <Card
-      key={form.id}
-      className={`cursor-pointer hover:shadow-lg transition-shadow p-6 flex flex-col justify-center items-center text-center relative h-40 md:h-full ${
-        activeForm ? "opacity-50 pointer-events-none" : "opacity-100"
-      }`}
-      onClick={() => setActiveForm(form.id)}
-      style={{
-        backgroundImage: `url('/images/${form.id}.jpg')`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
-      <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg"></div>
-      <CardHeader className="relative z-10 text-white">
-        <CardTitle className="text-lg md:text-xl lg:text-2xl">{form.title}</CardTitle>
-        {!activeForm && ( // Hide the description when a form is open
-          <p className="text-white text-sm md:text-base mt-2">{form.description}</p>
-        )}
-      </CardHeader>
-    </Card>
-  ))}
-</div>
-
+    <div className="container mx-auto p-4">
+      {forms.map((form) => (
+        <Card key={form.id} onClick={() => setActiveForm(form.id)}>
+          <CardHeader>
+            <CardTitle>{form.title}</CardTitle>
+          </CardHeader>
+        </Card>
+      ))}
 
       {activeForm && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">{forms.find((f) => f.id === activeForm)?.title}</h2>
-              <Button variant="ghost" size="icon" onClick={() => setActiveForm(null)}>
-                <X className="h-6 w-6" />
-              </Button>
-            </div>
-            <form className="space-y-4" onSubmit={handleSubmit}>
-              {renderFormFields()}
-              <Button type="submit" className="w-full">Submit</Button>
-            </form>
-          </div>
-        </div>
+        <form onSubmit={handleSubmit}>
+          {renderFormFields()}
+          <Button type="submit" disabled={loading}>
+            {loading ? "Submitting..." : "Submit"}
+          </Button>
+        </form>
       )}
     </div>
   );

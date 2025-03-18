@@ -2,6 +2,7 @@ import { defineConfig } from 'sanity';
 import { deskTool } from 'sanity/desk';
 import { visionTool } from '@sanity/vision';
 import submissions from './schemaTypes/submissions';
+import banner from './schemaTypes/banner';
 
 export default defineConfig({
   name: 'default',
@@ -15,7 +16,7 @@ export default defineConfig({
   plugins: [deskTool(), visionTool()], // Enables the Sanity Studio UI and Vision for queries
 
   schema: {
-    types: [submissions] // Import all schemas, including your `submission.js`
+    types: [submissions, banner] // Import all schemas, including your `submission.js`
   },
 
   // (Optional) Enable CORS for local development

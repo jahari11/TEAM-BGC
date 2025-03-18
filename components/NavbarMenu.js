@@ -50,7 +50,7 @@ export default function NavbarMenu() {
                         <Link href="/" className="hover:text-gray-400" onClick={() => setIsOpen(false)}>Photos</Link>
                     </li>
                     <li className="p-6">
-                        <Link href="/forms" className="hover:text-gray-400" onClick={() => setIsOpen(false)}>Forms</Link>
+                        <Link href="/bgcforms" className="hover:text-gray-400" onClick={() => setIsOpen(false)}>Team BGC Forms</Link>
                     </li>
                     <li className="p-6">
                         <Link href="/contact" className="hover:text-gray-400" onClick={() => setIsOpen(false)}>Contact</Link>
