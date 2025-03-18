@@ -16,7 +16,8 @@ export default function TeamForm() {
         phone: '',
         team_name: '',
         team_category: '',
-        additional_info: ''
+        additional_info: '',
+        form_type: "Team Form"
     });
 
     const [message, setMessage] = useState("");
