@@ -97,11 +97,11 @@ export default function Under18Waiver() {
         <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
             <div className="text-center">
             <h2 className="text-xl font-bold text-center">Under 18 Waiver Form</h2>
-            <span className="text-lg font-bold">Parent/guardian consent form.</span>
+            <span className="text-lg font-bold mb-2">Parent/guardian consent form.</span>
             </div>
             <form onSubmit={handleSubmit}>
                 <div className="mb-2">
-                    <Label htmlFor="first_name">First Name</Label>
+                    <Label className="font-bold " htmlFor="first_name">First Name</Label>
                     <input
                         id="first_name"
                         type="text"
@@ -110,11 +110,12 @@ export default function Under18Waiver() {
                         onChange={handleChange}
                         required
                         className="w-full p-2 border rounded"
+                        placeholder="First Name"
                     />
                 </div>
                 
                 <div className="mb-2">
-                    <Label htmlFor="last_name">Last Name</Label>
+                    <Label className="font-bold " htmlFor="last_name">Last Name</Label>
                     <input
                         id="last_name"
                         type="text"
@@ -123,11 +124,12 @@ export default function Under18Waiver() {
                         onChange={handleChange}
                         required
                         className="w-full p-2 border rounded"
+                        placeholder="Last Name"
                     />
                 </div>
 
                 <div className="mb-2">
-                    <Label htmlFor="date_of_birth">Date of Birth</Label>
+                    <Label className="font-bold " htmlFor="date_of_birth">Date of Birth</Label>
                     <input
                         id="date_of_birth"
                         type="date"
@@ -136,11 +138,12 @@ export default function Under18Waiver() {
                         onChange={handleChange}
                         required
                         className="w-full p-2 border rounded"
+
                     />
                 </div>
 
                 <div className="mb-2">
-                    <Label htmlFor="guardian_first_name">Guardian First Name</Label>
+                    <Label className="font-bold " htmlFor="guardian_first_name">Guardian First Name</Label>
                     <input
                         id="guardian_first_name"
                         type="text"
@@ -149,11 +152,12 @@ export default function Under18Waiver() {
                         onChange={handleChange}
                         required
                         className="w-full p-2 border rounded"
+                        placeholder="Guardian First Name"
                     />
                 </div>
 
                 <div className="mb-2">
-                    <Label htmlFor="guardian_last_name">Guardian Last Name</Label>
+                    <Label className="font-bold " htmlFor="guardian_last_name">Guardian Last Name</Label>
                     <input
                         id="guardian_last_name"
                         type="text"
@@ -162,11 +166,12 @@ export default function Under18Waiver() {
                         onChange={handleChange}
                         required
                         className="w-full p-2 border rounded"
+                        placeholder="Guardian Last Name"
                     />
                 </div>
 
                 <div className="mb-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label className="font-bold " htmlFor="email">Email</Label>
                     <input
                         id="email"
                         type="email"
@@ -175,11 +180,12 @@ export default function Under18Waiver() {
                         onChange={handleChange}
                         required
                         className="w-full p-2 border rounded"
+                        placeholder="Email"
                     />
                 </div>
 
                 <div className="mb-2">
-                    <Label htmlFor="phone">Phone Number</Label>
+                    <Label className="font-bold " htmlFor="phone">Phone Number</Label>
                     <input
                         id="phone"
                         type="tel"
@@ -188,11 +194,12 @@ export default function Under18Waiver() {
                         onChange={handleChange}
                         required
                         className="w-full p-2 border rounded"
+                        placeholder="Phone Number"
                     />
                 </div>
 
                 <div className="mb-2">
-                    <Label htmlFor="team_category">Team Category</Label>
+                    <Label className="font-bold " htmlFor="team_category">Team Category</Label>
                     <select
                         id="team_category"
                         name="team_category"

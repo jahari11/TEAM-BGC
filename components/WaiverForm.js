@@ -57,11 +57,11 @@ export default function WaiverForm() {
 
     return (
         <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-bold mb-4 text-center">Regular Waiver Form</h2>
-            <p className="text-lg text-center">Participant form</p>
+            <h2 className="text-xl font-bold text-center">Regular Waiver Form</h2>
+            <p className="text-lg text-center mb-2">Participant form</p>
             <form onSubmit={handleSubmit}>
                 <div className="mb-2">
-                    <Label htmlFor="first_name">First Name</Label>
+                    <Label className="font-bold " htmlFor="first_name">First Name</Label>
                     <input
                         id="first_name"
                         type="text"
@@ -70,11 +70,12 @@ export default function WaiverForm() {
                         onChange={handleChange}
                         required
                         className="w-full p-2 border rounded"
+                        placeholder="First Name"
                     />
                 </div>
 
                 <div className="mb-2">
-                    <Label htmlFor="last_name">Last Name</Label>
+                    <Label className="font-bold " htmlFor="last_name">Last Name</Label>
                     <input
                         id="last_name"
                         type="text"
@@ -83,11 +84,12 @@ export default function WaiverForm() {
                         onChange={handleChange}
                         required
                         className="w-full p-2 border rounded"
+                        placeholder="Last Name"
                     />
                 </div>
 
                 <div className="mb-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label className="font-bold " htmlFor="email">Email</Label>
                     <input
                         id="email"
                         type="email"
@@ -96,11 +98,12 @@ export default function WaiverForm() {
                         onChange={handleChange}
                         required
                         className="w-full p-2 border rounded"
+                        placeholder="Email"
                     />
                 </div>
 
                 <div className="mb-2">
-                    <Label htmlFor="phone">Phone Number</Label>
+                    <Label className="font-bold " htmlFor="phone">Phone Number</Label>
                     <input
                         id="phone"
                         type="tel"
@@ -109,11 +112,12 @@ export default function WaiverForm() {
                         onChange={handleChange}
                         required
                         className="w-full p-2 border rounded"
+                        placeholder="Phone Number"
                     />
                 </div>
 
                 <div className="mb-2">
-                    <Label htmlFor="team_category">Event Category</Label>
+                    <Label className="font-bold " htmlFor="team_category">Event Category</Label>
                     <select
                         id="team_category"
                         name="team_category"
@@ -133,7 +137,7 @@ export default function WaiverForm() {
                     type="submit"
                     className="w-full bg-blue-500 text-white py-2 rounded"
                 >
-                    Submit Waiver
+                    Submit
                 </button>
             </form>
             {message && <p className="mt-3 text-center text-sm">{message}</p>}

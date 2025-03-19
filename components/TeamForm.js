@@ -64,11 +64,11 @@ export default function TeamForm() {
 
     return (
         <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-bold mb-4 text-center">Team Registration Form</h2>
-            <p className="text-lg text-center">Register your team for the BGC.</p>
+            <h2 className="text-xl font-bold text-center">Team Registration Form</h2>
+            <p className="text-lg text-center mb-2">Register your team for the BGC.</p>
             <form onSubmit={handleSubmit}>
                 <div className="mb-2">
-                    <Label htmlFor="first_name">First Name</Label>
+                    <Label className="font-bold " htmlFor="first_name">First Name</Label>
                     <input
                         id="first_name"
                         type="text"
@@ -77,11 +77,12 @@ export default function TeamForm() {
                         onChange={handleChange}
                         required
                         className="w-full p-2 border rounded"
+                        placeholder="First Name"
                     />
                 </div>
 
                 <div className="mb-2">
-                    <Label htmlFor="last_name">Last Name</Label>
+                    <Label className="font-bold " htmlFor="last_name">Last Name</Label>
                     <input
                         id="last_name"
                         type="text"
@@ -90,11 +91,12 @@ export default function TeamForm() {
                         onChange={handleChange}
                         required
                         className="w-full p-2 border rounded"
+                        placeholder="Last Name"
                     />
                 </div>
 
                 <div className="mb-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label className="font-bold " htmlFor="email">Email</Label>
                     <input
                         id="email"
                         type="email"
@@ -103,11 +105,12 @@ export default function TeamForm() {
                         onChange={handleChange}
                         required
                         className="w-full p-2 border rounded"
+                        placeholder="Email"
                     />
                 </div>
 
                 <div className="mb-2">
-                    <Label htmlFor="phone">Phone Number</Label>
+                    <Label className="font-bold " htmlFor="phone">Phone Number</Label>
                     <input
                         id="phone"
                         type="tel"
@@ -116,11 +119,12 @@ export default function TeamForm() {
                         onChange={handleChange}
                         required
                         className="w-full p-2 border rounded"
+                        placeholder="Phone Number"
                     />
                 </div>
 
                 <div className="mb-2">
-                    <Label htmlFor="team_name">Team Name</Label>
+                    <Label className="font-bold " htmlFor="team_name">Team Name</Label>
                     <input
                         id="team_name"
                         type="text"
@@ -129,11 +133,12 @@ export default function TeamForm() {
                         onChange={handleChange}
                         required
                         className="w-full p-2 border rounded"
+                        placeholder="Team Name"
                     />
                 </div>
 
                 <div className="mb-2">
-                    <Label htmlFor="team_category">Team Category</Label>
+                    <Label className="font-bold " htmlFor="team_category">Team Category</Label>
                     <select
                         id="team_category"
                         name="team_category"
@@ -151,13 +156,14 @@ export default function TeamForm() {
                 </div>
 
                 <div className="mb-2">
-                    <Label htmlFor="additional_info">Additional Information</Label>
+                    <Label className="font-bold " htmlFor="additional_info">Additional Information</Label>
                     <textarea
                         id="additional_info"
                         name="additional_info"
                         value={formData.additional_info}
                         onChange={handleChange}
                         className="w-full p-2 border rounded"
+                        placeholder="Additional Information..."
                     />
                 </div>
 
