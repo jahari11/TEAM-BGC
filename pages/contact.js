@@ -73,6 +73,7 @@ export default function Contact() {
         </Button>
       </form>
 
+      {/* Support Section 
       <div className="h-[20rem]  flex flex-col antialiased dark:bg-black dark:bg-grid-white/[0.05] items-center justify-center relative overflow-hidden">
       <span className="text-4xl font-bold uppercase">Our sponsors</span>
       <InfiniteMovingCards
@@ -81,6 +82,7 @@ export default function Contact() {
         speed="fast"
       />
     </div>
+    */}
 
       {/* Support Section */}
       <div className="mt-10 p-6 bg-gray-50 rounded-lg shadow-md text-center">

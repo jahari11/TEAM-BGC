@@ -67,13 +67,14 @@ export default function Under18Waiver() {
                     email: formData.email,
                     phone: formData.phone,
                     team_category: formData.team_category,
-                    documents: fileUrl
+                    documents: fileUrl,
+                    form_type: "Under 18 Form"
                 },
             ]);
 
             if (insertError) throw insertError;
 
-            setMessage("Upload successful");
+            setMessage("Waiver submitted successfully");
             setFormData({
                 first_name: '',
                 last_name: '',
@@ -84,7 +85,6 @@ export default function Under18Waiver() {
                 phone: '',
                 team_category: '',
                 file: null,
-                form_type: "Under18 Waiver Form"
             });
         } catch (error) {
             setMessage(`Error: ${error.message}`);

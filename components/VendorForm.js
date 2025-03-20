@@ -44,7 +44,7 @@ export default function VendorForm() {
 
             if (insertError) throw insertError;
 
-            setMessage("Submission successful");
+            setMessage("Form submitted successfully");
             setFormData({
                 first_name: '',
                 last_name: '',

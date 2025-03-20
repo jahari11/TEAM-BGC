@@ -17,7 +17,7 @@ export default function TeamForm() {
         team_name: '',
         team_category: '',
         additional_info: '',
-        form_type: "Team Form"
+        
     });
 
     const [message, setMessage] = useState("");
@@ -40,7 +40,8 @@ export default function TeamForm() {
                     phone: formData.phone,
                     team_name: formData.team_name,
                     team_category: formData.team_category,
-                    additional_info: formData.additional_info
+                    additional_info: formData.additional_info,
+                    form_type: "Team Form"
                 },
             ]);
 
